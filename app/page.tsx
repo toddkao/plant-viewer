@@ -22,14 +22,14 @@ type Plant = {
 
 const plantFields: Plant = {
   "Common Name": "",
-  "Botanical Name": "",
-  "Propagation": "",
-  "Height": "",
-  "Spread": "",
   "Flower Colour": "",
+  "Botanical Name": "",
   "Blooms": "",
+  "Propagation": "",
   "Sunlight Requirement": "",
+  "Height": "",
   "Water Requirements": "",
+  "Spread": "",
   "Zone": "",
   "Image": "",
 };
