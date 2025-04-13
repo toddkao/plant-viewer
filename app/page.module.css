@@ -178,14 +178,14 @@ a.secondary {
 }
 
 .leaf:before {
-  content: "";
+  /* content: "";
   z-index: 1;
   background-color: green;
   width: 100vw;
   height: 1px;
   position: absolute;
   top: 25px;
-  left: -50vw;
+  left: -50vw; */
 }
 
 .searchQuery textarea { 

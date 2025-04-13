@@ -235,8 +235,9 @@ export default function Home() {
                 plants?.[selectedPlantIndex as number] && <Flex direction="row" style={{ height: "100%" }}>
                   <div id="plant-image" style={{
                     backgroundImage: `url("${plants[selectedPlantIndex as number]?.["Image"]}")`,
-                    backgroundSize: "cover",
+                    backgroundSize: "contain",
                     backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
                     width: "50%",
                     height: "100%",
                     zIndex: 3,
@@ -301,7 +302,7 @@ export default function Home() {
                     return <Table.Cell key={fieldName}>{fieldValue}</Table.Cell>;
                   })}
 
-<Table.Cell
+                  <Table.Cell
                     onClick={(e) => {
                       e.stopPropagation();
                       if (plant.id !== undefined) {
@@ -317,7 +318,7 @@ export default function Home() {
                   >
                     <div>✏️</div>
                   </Table.Cell>
-                  
+
                   <Table.Cell
                     onClick={(e) => {
                       e.stopPropagation();
