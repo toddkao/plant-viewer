@@ -241,7 +241,8 @@ export default function Home() {
                     flexShrink: 0,
                   }} />
                   <Flex direction="column" align="center" justify="center" style={{ width: "100%" }}>
-                    <Text style={{ fontSize: 50, margin: "30px 0" }}> {plants?.[selectedPlantIndex as number]?.["Common Name"]} </Text>
+                    <Text style={{ fontSize: 50, marginTop: "30px" }}> {plants?.[selectedPlantIndex as number]?.["Common Name"]} </Text>
+                    <Text style={{ fontSize: 30, fontStyle: "italic", marginBottom: "30px" }}> {plants?.[selectedPlantIndex as number]?.["Botanical Name"]} </Text>
                     <div className={styles.leaf} />
                     <div style={{ zIndex: 3 }}>
                       <Image alt="decal" src="/leaf.png" height={50} width={150} />
@@ -249,7 +250,7 @@ export default function Home() {
                     <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0" }}> Plant Information </Text>
                     <Flex direction="column" style={{ overflow: 'visible', textWrap: "nowrap" }}>
                       {
-                        Object.entries(plants?.[selectedPlantIndex as number]).filter(([fieldName]) => !["Common Name", "id", "Image"].includes(fieldName)).map(([fieldName, fieldValue]) => (
+                        Object.entries(plants?.[selectedPlantIndex as number]).filter(([fieldName]) => !["Common Name", "Botanical Name", "id", "Image"].includes(fieldName)).map(([fieldName, fieldValue]) => (
                           <Flex key={fieldName} justify="start">
                             <Text style={{ fontSize: 20, fontWeight: "bold", marginRight: 20 }}> {fieldName}:</Text>
                             <Text style={{ fontSize: 20 }}>{fieldValue} </Text>
