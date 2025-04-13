@@ -289,7 +289,7 @@ export default function Home() {
 const DB_NAME = "PlantDB";
 const STORE_NAME = "plants";
 
-export const openDB = (): Promise<IDBDatabase> => {
+const openDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
     request.onerror = () => reject(request.error);
@@ -303,19 +303,19 @@ export const openDB = (): Promise<IDBDatabase> => {
   });
 };
 
-export const savePlant = async (plant: any) => {
+const savePlant = async (plant: any) => {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, "readwrite");
   tx.objectStore(STORE_NAME).add(plant);
 };
 
-export const deletePlantById = async (id: number) => {
+const deletePlantById = async (id: number) => {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, "readwrite");
   tx.objectStore(STORE_NAME).delete(id);
 };
 
-export const getAllPlants = async (): Promise<any[]> => {
+const getAllPlants = async (): Promise<any[]> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readonly");
