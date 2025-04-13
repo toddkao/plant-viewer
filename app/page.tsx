@@ -137,12 +137,12 @@ export default function Home() {
   }, [plants, searchQuery]);
 
   return (
-    <Theme>
+    <Theme appearance="dark">
       <div className={styles.page}>
         <main className={styles.main}>
-          <Button style={{ fontSize: 30, height: "50px", width: "200px", position: 'fixed', top:0, left: 0}} onClick={() => {
+          <Button variant="ghost" style={{ fontSize: 30, height: "50px", width: "50px", position: 'fixed', right:0, top: 0}} onClick={() => {
             screenfull.request();
-          }}>Fullscreen</Button>
+          }}>FS</Button>
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger>
               <Button style={{ fontSize: 30, height: "50px" }}>Add new plant</Button>
@@ -215,10 +215,12 @@ export default function Home() {
               width: '100vw',
               height: '100vh',
               padding: 0,
-              backgroundColor: 'white',
               overflow: "hidden",
               zIndex: 9999,
             }}>
+              <Button variant="ghost" style={{ fontSize: 30, height: "50px", width: "50px", color: "red", position: 'fixed', right:0, top: 0, }} onClick={() => {
+                setSelectedPlantIndex(undefined);
+              }}>X</Button>
               {
                 plants?.[selectedPlantIndex as number] && <Flex direction="row" style={{ height: "100%" }}>
                   <div id="plant-image" style={{
@@ -228,6 +230,7 @@ export default function Home() {
                     width: "50%",
                     height: "100%",
                     zIndex: 3,
+                    flexShrink: 0,
                   }} />
                   <Flex direction="column" align="center" justify="center" style={{ width: "100%" }}>
                     <Text style={{ fontSize: 50, margin: "30px 0"}}> {plants?.[selectedPlantIndex as number]?.["Common Name"]} </Text>
@@ -236,7 +239,7 @@ export default function Home() {
                       <Image alt="decal" src="/leaf.png" height={50} width={150} />
                     </div>
                     <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0"}}> Plant Information </Text>
-                    <Flex direction="column" style={{ width: 800, overflow: 'visible', textWrap: "nowrap" }}>
+                    <Flex direction="column" style={{ overflow: 'visible', textWrap: "nowrap" }}>
                       { 
                         Object.entries(plants?.[selectedPlantIndex as number]).filter(([fieldName]) => !["Common Name", "id", "Image"].includes(fieldName)).map(([fieldName, fieldValue]) => (
                           <Flex key={fieldName} justify="start">
@@ -256,7 +259,7 @@ export default function Home() {
           <div className={styles.searchQuery}>
             <TextArea id="search-query" value={searchQuery} onChange={updateSearchQuery} placeholder="Search for name or botanical name" />
           </div>
-          <Table.Root>
+          <Table.Root variant="surface">
             <Table.Header>
               <Table.Row>
                 {
