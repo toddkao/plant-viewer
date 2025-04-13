@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 import "@radix-ui/themes/styles.css";
 import { Button, Dialog, Flex, TextField, Theme, Text, Table, Box, TextArea } from "@radix-ui/themes";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 
 type Plant = {
   id?: number;
@@ -155,10 +156,12 @@ export default function Home() {
 
                             {newPlant["Image"] && (
                               <div style={{ marginTop: '1rem' }}>
-                                <img
+                                <Image
                                   src={newPlant["Image"]}
                                   alt="Preview"
-                                  style={{ width: '200px', borderRadius: '8px' }}
+                                  style={{ borderRadius: '8px' }}
+                                  height={0}
+                                  width={200}
                                 />
                               </div>
                             )}
@@ -218,7 +221,7 @@ export default function Home() {
                     <Text style={{ fontSize: 50, margin: "30px 0"}}> {plants?.[selectedPlantIndex as number]?.["Common Name"]} </Text>
                     <div className={styles.leaf} />
                     <div style={{ zIndex: 3 }}>
-                      <img src="/leaf.png" height="50px" />
+                      <Image alt="decal" src="/leaf.png" height={50} width={150} />
                     </div>
                     <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0"}}> Plant information </Text>
                     <Flex direction="column" style={{ width: 800, overflow: 'visible', textWrap: "nowrap" }}>
@@ -261,10 +264,12 @@ export default function Home() {
                     if (fieldName === "Image") {
                       return (
                         <Table.Cell key={fieldName}>
-                          <img
-                            src={fieldValue}
+                          <Image
+                            src={fieldValue.toString()}
                             alt="Preview"
-                            style={{ height: '50px', borderRadius: '8px' }}
+                            style={{ borderRadius: '8px' }}
+                            height={50}
+                            width={50}
                           />
                         </Table.Cell>
                       )
