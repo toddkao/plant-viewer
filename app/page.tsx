@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import styles from "./page.module.css";
 import "@radix-ui/themes/styles.css";
@@ -72,7 +73,6 @@ export default function Home() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((event.target as any).id === "search-query") return;
       // Handle Escape to close the dialog
       if (event.key === 'Escape') {
