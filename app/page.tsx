@@ -39,11 +39,22 @@ const plantFields: Plant = {
 export default function Home() {
 
   const [open, setOpen] = useState(false);
-  const openDialog = () => setOpen(true);
+  const openDialog = () => {
+    setNewPlant(plantFields);
+    setOpen(true);
+  };
   const [plants, setPlants] = useState<Plant[]>([]);
   const [newPlant, setNewPlant] = useState<Plant>(plantFields);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPlantIndex, setSelectedPlantIndex] = useState<number | undefined>(undefined);
+
+  const addOrSavePlant = async () => {
+    if (newPlant.id) {
+      await editPlantById(newPlant.id, newPlant);
+    } else {
+      await addNewPlant();
+    }
+  }
 
   const addNewPlant = async () => {
     await savePlant(newPlant);
@@ -62,12 +73,6 @@ export default function Home() {
       [field]: e.target.value,
     }));
   };
-
-  useEffect(() => {
-    if (open === true) {
-      setNewPlant(plantFields);
-    }
-  }, [open]);
 
   useEffect(() => {
     getAllPlants().then(setPlants);
@@ -140,13 +145,11 @@ export default function Home() {
     <Theme appearance="dark">
       <div className={styles.page}>
         <main className={styles.main}>
-          <Button variant="ghost" style={{ fontSize: 30, height: "50px", width: "50px", position: 'fixed', right:0, top: 0}} onClick={() => {
+          <Button variant="ghost" style={{ fontSize: 30, height: "50px", width: "50px", position: 'fixed', right: 0, top: 0 }} onClick={() => {
             screenfull.request();
           }}>FS</Button>
           <Dialog.Root open={open} onOpenChange={setOpen}>
-            <Dialog.Trigger>
-              <Button style={{ fontSize: 30, height: "50px" }}>Add new plant</Button>
-            </Dialog.Trigger>
+            <Button style={{ fontSize: 30, height: "50px" }} onClick={openDialog}>Add new plant</Button>
             <Dialog.Content size="4" maxWidth="1500px">
               <Dialog.Title style={{ fontSize: "25px" }}>Enter new plant details</Dialog.Title>
 
@@ -165,14 +168,13 @@ export default function Home() {
                         {
                           field === "Image" ? <>
                             <input type="file" accept="image/*" onChange={handleImageUpload} />
-
                             {newPlant["Image"] && (
                               <div style={{ marginTop: '1rem' }}>
                                 <Image
                                   src={newPlant["Image"]}
                                   alt="Preview"
                                   style={{ borderRadius: '8px' }}
-                                  height={0}
+                                  height={200}
                                   width={200}
                                 />
                               </div>
@@ -197,7 +199,7 @@ export default function Home() {
                   </Button>
                 </Dialog.Close>
                 <Dialog.Close>
-                  <Button onClick={addNewPlant}>Save</Button>
+                  <Button onClick={addOrSavePlant}>Save</Button>
                 </Dialog.Close>
               </Flex>
             </Dialog.Content>
@@ -218,7 +220,7 @@ export default function Home() {
               overflow: "hidden",
               zIndex: 9999,
             }}>
-              <Button variant="ghost" style={{ fontSize: 30, height: "50px", width: "50px", color: "red", position: 'fixed', right:0, top: 0, }} onClick={() => {
+              <Button variant="ghost" style={{ fontSize: 30, height: "50px", width: "50px", color: "red", position: 'fixed', right: 0, top: 0, }} onClick={() => {
                 setSelectedPlantIndex(undefined);
               }}>X</Button>
               {
@@ -233,14 +235,14 @@ export default function Home() {
                     flexShrink: 0,
                   }} />
                   <Flex direction="column" align="center" justify="center" style={{ width: "100%" }}>
-                    <Text style={{ fontSize: 50, margin: "30px 0"}}> {plants?.[selectedPlantIndex as number]?.["Common Name"]} </Text>
+                    <Text style={{ fontSize: 50, margin: "30px 0" }}> {plants?.[selectedPlantIndex as number]?.["Common Name"]} </Text>
                     <div className={styles.leaf} />
                     <div style={{ zIndex: 3 }}>
                       <Image alt="decal" src="/leaf.png" height={50} width={150} />
                     </div>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0"}}> Plant Information </Text>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0" }}> Plant Information </Text>
                     <Flex direction="column" style={{ overflow: 'visible', textWrap: "nowrap" }}>
-                      { 
+                      {
                         Object.entries(plants?.[selectedPlantIndex as number]).filter(([fieldName]) => !["Common Name", "id", "Image"].includes(fieldName)).map(([fieldName, fieldValue]) => (
                           <Flex key={fieldName} justify="start">
                             <Text style={{ fontSize: 20, fontWeight: "bold", marginRight: 20 }}> {fieldName}:</Text>
@@ -266,6 +268,7 @@ export default function Home() {
                   Object.keys(plantFields).map(field => (<Table.ColumnHeaderCell key={field}>{field} </Table.ColumnHeaderCell>))
                 }
                 <Table.ColumnHeaderCell>Delete</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Edit</Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
 
@@ -289,10 +292,34 @@ export default function Home() {
                     }
                     return <Table.Cell key={fieldName}>{fieldValue}</Table.Cell>;
                   })}
-                  <Table.Cell onClick={(e) => {
-                    e.stopPropagation();
-                    if (plant.id !== undefined) deletePlant(plant.id);
-                  }} style={{ fontSize: 30, display: 'flex', alignItems: "center", justifyContent: "center", height: "100%", cursor: "pointer", color: "red" }}> X </Table.Cell>
+                  <Table.Cell
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (plant.id !== undefined) deletePlant(plant.id);
+                    }}
+                    style={{
+                      fontSize: 18,
+                    }}
+                  >
+                    <div>❌</div>
+                  </Table.Cell>
+
+                  <Table.Cell
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (plant.id !== undefined) {
+                        setNewPlant(plant);
+                        console.log(plant);
+                        setOpen(true);
+                      }
+                    }}
+                    style={{
+                      fontSize: 18,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div>✏️</div>
+                  </Table.Cell>
                 </Table.Row>
               )
               )}
@@ -331,6 +358,13 @@ const deletePlantById = async (id: number) => {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, "readwrite");
   tx.objectStore(STORE_NAME).delete(id);
+};
+
+export const editPlantById = async (id: number, updatedPlant: Plant) => {
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, "readwrite");
+  const store = tx.objectStore(STORE_NAME);
+  store.put({ ...updatedPlant, id });
 };
 
 const getAllPlants = async (): Promise<any[]> => {
