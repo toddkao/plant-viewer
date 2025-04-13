@@ -6,6 +6,7 @@ import { Button, Dialog, Flex, TextField, Theme, Text, Table, TextArea } from "@
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import screenfull from 'screenfull';
+import Papa from 'papaparse';
 
 type Plant = {
   id?: number;
@@ -135,6 +136,31 @@ export default function Home() {
     reader.readAsDataURL(file);
   };
 
+  const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results: { data: any; }) {
+        console.log("Parsed CSV:", results.data);
+        setPlants(results.data.map((data: any, index: number) => ({...data, id: index})));
+      },
+    });
+  };
+
+  const exportToCSV = (data: any[]) => {
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'plants.csv');
+    link.click();
+  };
+
   const deletePlant = async (id: number) => {
     await deletePlantById(id);
     const updatedPlants = await getAllPlants();
@@ -154,12 +180,17 @@ export default function Home() {
           <Button variant="ghost" style={{ fontSize: 30, height: "50px", width: "50px", position: 'fixed', right: 0, top: 0 }} onClick={() => {
             screenfull.request();
           }}>FS</Button>
+          <Flex>
+            <input type="file" accept=".csv" onChange={handleCSVUpload} />
+            <Button onClick={() => exportToCSV(plants)}> Export as csv </Button>
+          </Flex>
+
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Button style={{ fontSize: 30, height: "50px" }} onClick={openDialog}>Add new plant</Button>
             <Dialog.Content size="4" maxWidth="1500px">
               <Dialog.Title style={{ fontSize: "25px" }}>Enter new plant details</Dialog.Title>
 
-              <Flex direction="column" gap="3" wrap="wrap" style={{ maxHeight: "40vh"}}>
+              <Flex direction="column" gap="3" wrap="wrap" style={{ maxHeight: "40vh" }}>
                 {
                   Object.keys(plantFields).map(field => (
                     <Flex
@@ -248,7 +279,7 @@ export default function Home() {
                       <Image alt="decal" src="/leaf.png" height={50} width={150} />
                     </div>
                     <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0" }}> Plant Information </Text>
-                    <Flex direction="column" style={{ overflow: 'visible', textWrap: "nowrap" }}>
+                    <Flex direction="column">
                       {
                         Object.entries(plants?.[selectedPlantIndex as number]).filter(([fieldName]) => !["Common Name", "Botanical Name", "id", "Image"].includes(fieldName)).map(([fieldName, fieldValue]) => (
                           <Flex key={fieldName} justify="start">

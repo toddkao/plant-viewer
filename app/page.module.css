@@ -190,5 +190,6 @@ a.secondary {
 
 .searchQuery textarea { 
   font-size: 30px;
+  line-height: 30px;
   padding: 10px;
 }
