@@ -275,8 +275,8 @@ export default function Home() {
                 {
                   Object.keys(plantFields).map(field => (<Table.ColumnHeaderCell key={field}>{field} </Table.ColumnHeaderCell>))
                 }
-                <Table.ColumnHeaderCell>Delete</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell>Edit</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Delete</Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
 
@@ -300,19 +300,8 @@ export default function Home() {
                     }
                     return <Table.Cell key={fieldName}>{fieldValue}</Table.Cell>;
                   })}
-                  <Table.Cell
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (plant.id !== undefined) deletePlant(plant.id);
-                    }}
-                    style={{
-                      fontSize: 18,
-                    }}
-                  >
-                    <div>❌</div>
-                  </Table.Cell>
 
-                  <Table.Cell
+<Table.Cell
                     onClick={(e) => {
                       e.stopPropagation();
                       if (plant.id !== undefined) {
@@ -327,6 +316,18 @@ export default function Home() {
                     }}
                   >
                     <div>✏️</div>
+                  </Table.Cell>
+                  
+                  <Table.Cell
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (plant.id !== undefined) deletePlant(plant.id);
+                    }}
+                    style={{
+                      fontSize: 18,
+                    }}
+                  >
+                    <div>❌</div>
                   </Table.Cell>
                 </Table.Row>
               )
