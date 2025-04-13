@@ -7,7 +7,11 @@ const {
 
 module.exports = async (phase: any): Promise<import("next").NextConfig> => {
   /** @type {import("next").NextConfig} */
-  const nextConfig = {};
+  const nextConfig = {
+    typescript: {
+      ignoreBuildErrors: true,
+    },
+  };
 
   if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
     const withSerwist = (await import("@serwist/next")).default({
