@@ -61,6 +61,12 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if (open === true) {
+      setNewPlant(plantFields);
+    }
+  }, [open]);
+
+  useEffect(() => {
     getAllPlants().then(setPlants);
   }, []);
 
