@@ -2,9 +2,10 @@
 'use client'
 import styles from "./page.module.css";
 import "@radix-ui/themes/styles.css";
-import { Button, Dialog, Flex, TextField, Theme, Text, Table, Box, TextArea } from "@radix-ui/themes";
+import { Button, Dialog, Flex, TextField, Theme, Text, Table, TextArea } from "@radix-ui/themes";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import screenfull from 'screenfull';
 
 type Plant = {
   id?: number;
@@ -74,10 +75,18 @@ export default function Home() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      console.log(event);
+
       if ((event.target as any).id === "search-query") return;
       // Handle Escape to close the dialog
       if (event.key === 'Escape') {
         setOpen(false);
+        setSelectedPlantIndex(undefined);
+        return;
+      }
+
+
+      if (event.key === 'Enter' || event.code === "Space") {
         setSelectedPlantIndex(undefined);
         return;
       }
@@ -131,9 +140,12 @@ export default function Home() {
     <Theme>
       <div className={styles.page}>
         <main className={styles.main}>
+          <Button style={{ fontSize: 30, height: "50px", width: "200px", position: 'fixed', top:0, left: 0}} onClick={() => {
+            screenfull.request();
+          }}>Fullscreen</Button>
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger>
-              <Button>Add new plant</Button>
+              <Button style={{ fontSize: 30, height: "50px" }}>Add new plant</Button>
             </Dialog.Trigger>
             <Dialog.Content size="4" maxWidth="1500px">
               <Dialog.Title style={{ fontSize: "25px" }}>Enter new plant details</Dialog.Title>
@@ -209,7 +221,7 @@ export default function Home() {
             }}>
               {
                 plants?.[selectedPlantIndex as number] && <Flex direction="row" style={{ height: "100%" }}>
-                  <div style={{
+                  <div id="plant-image" style={{
                     backgroundImage: `url("${plants[selectedPlantIndex as number]?.["Image"]}")`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
@@ -223,7 +235,7 @@ export default function Home() {
                     <div style={{ zIndex: 3 }}>
                       <Image alt="decal" src="/leaf.png" height={50} width={150} />
                     </div>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0"}}> Plant information </Text>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0"}}> Plant Information </Text>
                     <Flex direction="column" style={{ width: 800, overflow: 'visible', textWrap: "nowrap" }}>
                       { 
                         Object.entries(plants?.[selectedPlantIndex as number]).filter(([fieldName]) => !["Common Name", "id", "Image"].includes(fieldName)).map(([fieldName, fieldValue]) => (
@@ -241,11 +253,9 @@ export default function Home() {
 
             </Dialog.Content>
           </Dialog.Root>
-
-          <Box>
-            <TextArea id="search-query" size="3" value={searchQuery} onChange={updateSearchQuery} placeholder="Search for name or botanical name" />
-          </Box>
-
+          <div className={styles.searchQuery}>
+            <TextArea id="search-query" value={searchQuery} onChange={updateSearchQuery} placeholder="Search for name or botanical name" />
+          </div>
           <Table.Root>
             <Table.Header>
               <Table.Row>

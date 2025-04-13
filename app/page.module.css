@@ -186,3 +186,8 @@ a.secondary {
   top: 25px;
   left: -50vw;
 }
+
+.searchQuery textarea { 
+  font-size: 30px;
+  padding: 10px;
+}
