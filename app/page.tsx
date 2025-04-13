@@ -10,29 +10,27 @@ import screenfull from 'screenfull';
 type Plant = {
   id?: number;
   "Common Name": string;
+  "Remarks": "",
   "Botanical Name": string;
-  "Propagation": string;
   "Height": string;
   "Spread": string;
-  "Flower Colour": string;
-  "Blooms": string;
-  "Sunlight Requirement": string;
-  "Water Requirements": string;
-  "Zone": string;
+  "Bloom": string;
+  "Light": string;
+  "Water": string;
+  "Hardy Zone": string;
   "Image": string;
 }
 
 const plantFields: Plant = {
   "Common Name": "",
-  "Flower Colour": "",
   "Botanical Name": "",
-  "Blooms": "",
-  "Propagation": "",
-  "Sunlight Requirement": "",
+  "Remarks": "",
   "Height": "",
-  "Water Requirements": "",
   "Spread": "",
-  "Zone": "",
+  "Light": "",
+  "Water": "",
+  "Bloom": "",
+  "Hardy Zone": "",
   "Image": "",
 };
 
@@ -161,13 +159,12 @@ export default function Home() {
             <Dialog.Content size="4" maxWidth="1500px">
               <Dialog.Title style={{ fontSize: "25px" }}>Enter new plant details</Dialog.Title>
 
-              <Flex direction="row" gap="3" wrap="wrap">
+              <Flex direction="column" gap="3" wrap="wrap" style={{ maxHeight: "40vh"}}>
                 {
                   Object.keys(plantFields).map(field => (
                     <Flex
                       key={field}
                       direction="column"
-                      style={{ width: 'calc(50% - 0.5rem)' }} // 2 columns with gap
                     >
                       <label key={field}>
                         <Text as="div" size="4" mb="1" weight="bold">
