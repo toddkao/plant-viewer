@@ -50,7 +50,7 @@ export default function Home() {
 
   const addOrSavePlant = async () => {
     if (newPlant.id) {
-      await editPlantById(newPlant.id, newPlant);
+      await editPlant();
     } else {
       await addNewPlant();
     }
@@ -60,6 +60,14 @@ export default function Home() {
     await savePlant(newPlant);
     const updatedPlants = await getAllPlants();
     setPlants(updatedPlants);
+  }
+
+  const editPlant = async () => {
+    if (newPlant.id) {
+      await editPlantById(newPlant.id, newPlant);
+      const updatedPlants = await getAllPlants();
+      setPlants(updatedPlants);
+    }
   }
 
   const updateSearchQuery = (e: ChangeEvent<HTMLTextAreaElement>) => {
