@@ -166,3 +166,24 @@ a.secondary {
     filter: invert();
   }
 }
+
+.tableRow:hover {
+  background-color: lightgreen;
+  cursor: pointer;
+}
+
+.leaf {
+  position: relative;
+}
+
+.leaf:before {
+  content: "";
+  z-index: 1;
+  background-color: lightgreen;
+  width: 100vw;
+  height: 1px;
+  position: absolute;
+  top: 25px;
+  left: -500px;
+  transform: translateY(-50%);
+}
