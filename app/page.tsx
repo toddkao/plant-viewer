@@ -145,7 +145,10 @@ export default function Home() {
       skipEmptyLines: true,
       complete: function (results: { data: any; }) {
         console.log("Parsed CSV:", results.data);
-        setPlants(results.data.map((data: any, index: number) => ({...data, id: index})));
+
+        const newPlants = results.data.map((data: any, index: number) => ({...data, id: index}));
+        setPlants(newPlants);
+        overwritePlantsDB(newPlants);
       },
     });
   };
@@ -280,14 +283,17 @@ export default function Home() {
                     </div>
                     <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0" }}> Plant Information </Text>
                     <Flex direction="column">
+                    <Text style={{ fontSize: 20, marginBottom: "30px", maxWidth: "500px" }}> {plants?.[selectedPlantIndex as number]?.["Remarks"]} </Text>
+
                       {
-                        Object.entries(plants?.[selectedPlantIndex as number]).filter(([fieldName]) => !["Common Name", "Botanical Name", "id", "Image"].includes(fieldName)).map(([fieldName, fieldValue]) => (
+                        Object.entries(plants?.[selectedPlantIndex as number]).filter(([fieldName]) => !["Common Name", "Botanical Name", "id", "Image", "Remarks"].includes(fieldName)).map(([fieldName, fieldValue]) => (
                           <Flex key={fieldName} justify="start">
                             <Text style={{ fontSize: 20, fontWeight: "bold", marginRight: 20 }}> {fieldName}:</Text>
                             <Text style={{ fontSize: 20 }}>{fieldValue} </Text>
                           </Flex>
                         ))
                       }
+
                     </Flex>
                   </Flex>
                 </Flex>
@@ -404,6 +410,18 @@ export const editPlantById = async (id: number, updatedPlant: Plant) => {
   const tx = db.transaction(STORE_NAME, "readwrite");
   const store = tx.objectStore(STORE_NAME);
   store.put({ ...updatedPlant, id });
+};
+
+export const overwritePlantsDB = async (newPlants: Plant[]) => {
+  const db = await openDB();
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+
+  store.clear();
+
+  newPlants.forEach(plant => {
+    store.add(plant);
+  });
 };
 
 const getAllPlants = async (): Promise<any[]> => {
