@@ -18,7 +18,7 @@ type Plant = {
   "Bloom": string;
   "Light": string;
   "Water": string;
-  "Hardy Zone": string;
+  "HardyZone": string;
   "Image": string;
 }
 
@@ -31,7 +31,7 @@ const plantFields: Plant = {
   "Light": "",
   "Water": "",
   "Bloom": "",
-  "Hardy Zone": "",
+  "HardyZone": "",
   "Image": "",
 };
 
@@ -48,7 +48,7 @@ export default function Home() {
   const [selectedPlantIndex, setSelectedPlantIndex] = useState<number | undefined>(undefined);
 
   const addOrSavePlant = async () => {
-    if (newPlant.id) {
+    if (newPlant.id !== undefined) {
       await editPlant();
     } else {
       await addNewPlant();
@@ -62,7 +62,7 @@ export default function Home() {
   }
 
   const editPlant = async () => {
-    if (newPlant.id) {
+    if (newPlant.id !== undefined) {
       await editPlantById(newPlant.id, newPlant);
       const updatedPlants = await getAllPlants();
       setPlants(updatedPlants);
@@ -87,8 +87,6 @@ export default function Home() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      console.log(event);
-
       if ((event.target as any).id === "search-query") return;
       // Handle Escape to close the dialog
       if (event.key === 'Escape') {
@@ -144,9 +142,15 @@ export default function Home() {
       header: true,
       skipEmptyLines: true,
       complete: function (results: { data: any; }) {
-        console.log("Parsed CSV:", results.data);
-
-        const newPlants = results.data.map((data: any, index: number) => ({...data, id: index}));
+        const newPlants = results.data.map((data: any, index: number) => {
+          const plantData = data;
+          delete data["ImagePath"];
+          if (!plantData["Image"]) {
+            plantData["Image"] = "";
+          }
+          
+          return ({...plantData, id: index});
+        });
         setPlants(newPlants);
         overwritePlantsDB(newPlants);
       },
@@ -342,7 +346,6 @@ export default function Home() {
                       e.stopPropagation();
                       if (plant.id !== undefined) {
                         setNewPlant(plant);
-                        console.log(plant);
                         setOpen(true);
                       }
                     }}
