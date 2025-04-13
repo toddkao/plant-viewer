@@ -184,6 +184,5 @@ a.secondary {
   height: 1px;
   position: absolute;
   top: 25px;
-  left: -500px;
-  transform: translateY(-50%);
+  left: -50vw;
 }
