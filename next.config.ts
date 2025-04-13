@@ -17,7 +17,7 @@ module.exports = async (phase: any): Promise<import("next").NextConfig> => {
     const withSerwist = (await import("@serwist/next")).default({
       // Note: This is only an example. If you use Pages Router,
       // use something else that works, such as "service-worker/index.ts".
-      swSrc: "public/sw.ts",
+      swSrc: "service-worker/index.ts",
       swDest: "public/sw.js",
     });
     return withSerwist(nextConfig);
