@@ -169,11 +169,11 @@ export default function Home() {
     link.click();
   };
 
-  const deletePlant = async (id: number) => {
-    await deletePlantById(id);
-    const updatedPlants = await getAllPlants();
-    setPlants(updatedPlants);
-  };
+  // const deletePlant = async (id: number) => {
+  //   await deletePlantById(id);
+  //   const updatedPlants = await getAllPlants();
+  //   setPlants(updatedPlants);
+  // };
 
   const filteredPlants = useMemo(() => {
     return plants.filter(plant => {
