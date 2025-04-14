@@ -71,6 +71,7 @@ export default function Home() {
 
   const updateSearchQuery = (e: ChangeEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
+    console.log(plants);
     setSearchQuery(e.target.value);
   };
 
@@ -176,7 +177,14 @@ export default function Home() {
 
   const filteredPlants = useMemo(() => {
     return plants.filter(plant => {
-      return plant["Common Name"].toLowerCase().includes(searchQuery) || plant["Botanical Name"].toLowerCase().includes(searchQuery);
+      const searchQueryLowerCase = searchQuery.toLowerCase();
+      return (
+        plant["Common Name"].toLowerCase().includes(searchQueryLowerCase) ||
+        plant["Botanical Name"].toLowerCase().includes(searchQueryLowerCase) ||
+        plant["Light"].toLowerCase().includes(searchQueryLowerCase) ||
+        plant["Water"].toLowerCase().includes(searchQueryLowerCase) || 
+        plant["Bloom"].toLowerCase().includes(searchQueryLowerCase)
+      );
     })
   }, [plants, searchQuery]);
 
@@ -307,7 +315,7 @@ export default function Home() {
             </Dialog.Content>
           </Dialog.Root>
           <div className={styles.searchQuery}>
-            <TextArea id="search-query" value={searchQuery} onChange={updateSearchQuery} placeholder="Search for name or botanical name" />
+            <TextArea id="search-query" value={searchQuery} onChange={updateSearchQuery} placeholder="Search for common name, botanical name, light, water, or bloom" />
           </div>
           <Table.Root variant="surface">
             <Table.Header>
@@ -325,7 +333,7 @@ export default function Home() {
                 <Table.Row key={index} onClick={() => setSelectedPlantIndex(index)} className={styles.tableRow}>
                   {Object.entries(plant).map(([fieldName, fieldValue]) => {
                     if (fieldName === "id") return;
-                    if (fieldName === "Image") {
+                    if (fieldName === "Image" && fieldValue) {
                       return (
                         <Table.Cell key={fieldName}>
                           <Image
