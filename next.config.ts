@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-require-imports */
+
+const { env } = require("process");
+
 const {
   PHASE_DEVELOPMENT_SERVER,
   PHASE_PRODUCTION_BUILD,
@@ -19,6 +22,7 @@ module.exports = async (phase: any): Promise<import("next").NextConfig> => {
       // use something else that works, such as "service-worker/index.ts".
       swSrc: "service-worker/index.ts",
       swDest: "public/sw.js",
+      disable: env.NODE_ENV !== "production",
     });
     return withSerwist(nextConfig);
   }
