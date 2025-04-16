@@ -45,7 +45,7 @@ export default function Home() {
   const [plants, setPlants] = useState<Plant[]>([]);
   const [newPlant, setNewPlant] = useState<Plant>(plantFields);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedPlantIndex, setSelectedPlantIndex] = useState<number | undefined>(undefined);
+  const [selectedPlantId, setSelectedPlantId] = useState<number | undefined>(undefined);
 
   const addOrSavePlant = async () => {
     if (newPlant.id !== undefined) {
@@ -92,13 +92,13 @@ export default function Home() {
       // Handle Escape to close the dialog
       if (event.key === 'Escape') {
         setOpen(false);
-        setSelectedPlantIndex(undefined);
+        setSelectedPlantId(undefined);
         return;
       }
 
 
       if (event.key === 'Enter' || event.code === "Space") {
-        setSelectedPlantIndex(undefined);
+        setSelectedPlantId(undefined);
         return;
       }
 
@@ -149,8 +149,8 @@ export default function Home() {
           if (!plantData["Image"]) {
             plantData["Image"] = "";
           }
-          
-          return ({...plantData, id: index});
+
+          return ({ ...plantData, id: index });
         });
         setPlants(newPlants);
         overwritePlantsDB(newPlants);
@@ -182,11 +182,52 @@ export default function Home() {
         plant["Common Name"].toLowerCase().includes(searchQueryLowerCase) ||
         plant["Botanical Name"].toLowerCase().includes(searchQueryLowerCase) ||
         plant["Light"].toLowerCase().includes(searchQueryLowerCase) ||
-        plant["Water"].toLowerCase().includes(searchQueryLowerCase) || 
+        plant["Water"].toLowerCase().includes(searchQueryLowerCase) ||
         plant["Bloom"].toLowerCase().includes(searchQueryLowerCase)
       );
     })
   }, [plants, searchQuery]);
+
+  const renderSelectedPlant = useMemo(() => {
+    const selectedPlant = plants.find(plant => plant.id === selectedPlantId);
+    if (!selectedPlant) return;
+    return (
+      <Flex direction="row" style={{ height: "100%" }}>
+        <div id="plant-image" style={{
+          backgroundImage: `url("${selectedPlant?.["Image"]}")`,
+          backgroundSize: "contain",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          width: "50%",
+          height: "100%",
+          zIndex: 3,
+          flexShrink: 0,
+        }} />
+        <Flex direction="column" align="center" justify="center" style={{ width: "100%" }}>
+          <Text style={{ fontSize: 50, marginTop: "30px" }}> {selectedPlant?.["Common Name"]} </Text>
+          <Text style={{ fontSize: 30, fontStyle: "italic", marginBottom: "30px" }}> {selectedPlant?.["Botanical Name"]} </Text>
+          <div className={styles.leaf} />
+          <div style={{ zIndex: 3 }}>
+            <Image alt="decal" src="/leaf.png" height={50} width={150} />
+          </div>
+          <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0" }}> Plant Information </Text>
+          <Flex direction="column">
+            <Text style={{ fontSize: 20, marginBottom: "30px", maxWidth: "500px" }}> {selectedPlant?.["Remarks"]} </Text>
+
+            {
+              Object.entries(selectedPlant).filter(([fieldName]) => !["Common Name", "Botanical Name", "id", "Image", "Remarks"].includes(fieldName)).map(([fieldName, fieldValue]) => (
+                <Flex key={fieldName} justify="start">
+                  <Text style={{ fontSize: 20, fontWeight: "bold", marginRight: 20 }}> {fieldName}:</Text>
+                  <Text style={{ fontSize: 20 }}>{fieldValue} </Text>
+                </Flex>
+              ))
+            }
+
+          </Flex>
+        </Flex>
+      </Flex>
+    )
+  }, [plants, selectedPlantId]);
 
   return (
     <Theme appearance="dark">
@@ -256,8 +297,8 @@ export default function Home() {
             </Dialog.Content>
           </Dialog.Root>
 
-          <Dialog.Root open={selectedPlantIndex !== undefined} onOpenChange={(isOpen) => {
-            if (!isOpen) setSelectedPlantIndex(undefined);
+          <Dialog.Root open={selectedPlantId !== undefined} onOpenChange={(isOpen) => {
+            if (!isOpen) setSelectedPlantId(undefined);
           }}>
             <Dialog.Content maxWidth="100vw" style={{
               position: 'fixed',
@@ -272,46 +313,10 @@ export default function Home() {
               zIndex: 9999,
             }}>
               <Button variant="ghost" style={{ fontSize: 30, height: "50px", width: "50px", color: "red", position: 'fixed', right: 0, top: 0, }} onClick={() => {
-                setSelectedPlantIndex(undefined);
+                setSelectedPlantId(undefined);
               }}>X</Button>
-              {
-                plants?.[selectedPlantIndex as number] && <Flex direction="row" style={{ height: "100%" }}>
-                  <div id="plant-image" style={{
-                    backgroundImage: `url("${plants[selectedPlantIndex as number]?.["Image"]}")`,
-                    backgroundSize: "contain",
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                    width: "50%",
-                    height: "100%",
-                    zIndex: 3,
-                    flexShrink: 0,
-                  }} />
-                  <Flex direction="column" align="center" justify="center" style={{ width: "100%" }}>
-                    <Text style={{ fontSize: 50, marginTop: "30px" }}> {plants?.[selectedPlantIndex as number]?.["Common Name"]} </Text>
-                    <Text style={{ fontSize: 30, fontStyle: "italic", marginBottom: "30px" }}> {plants?.[selectedPlantIndex as number]?.["Botanical Name"]} </Text>
-                    <div className={styles.leaf} />
-                    <div style={{ zIndex: 3 }}>
-                      <Image alt="decal" src="/leaf.png" height={50} width={150} />
-                    </div>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", margin: "30px 0" }}> Plant Information </Text>
-                    <Flex direction="column">
-                    <Text style={{ fontSize: 20, marginBottom: "30px", maxWidth: "500px" }}> {plants?.[selectedPlantIndex as number]?.["Remarks"]} </Text>
 
-                      {
-                        Object.entries(plants?.[selectedPlantIndex as number]).filter(([fieldName]) => !["Common Name", "Botanical Name", "id", "Image", "Remarks"].includes(fieldName)).map(([fieldName, fieldValue]) => (
-                          <Flex key={fieldName} justify="start">
-                            <Text style={{ fontSize: 20, fontWeight: "bold", marginRight: 20 }}> {fieldName}:</Text>
-                            <Text style={{ fontSize: 20 }}>{fieldValue} </Text>
-                          </Flex>
-                        ))
-                      }
-
-                    </Flex>
-                  </Flex>
-                </Flex>
-              }
-
-
+              {renderSelectedPlant}
             </Dialog.Content>
           </Dialog.Root>
           <div className={styles.searchQuery}>
@@ -330,7 +335,7 @@ export default function Home() {
 
             <Table.Body>
               {filteredPlants.map((plant, index) => (
-                <Table.Row key={index} onClick={() => setSelectedPlantIndex(index)} className={styles.tableRow}>
+                <Table.Row key={index} onClick={() => setSelectedPlantId(plant.id)} className={styles.tableRow}>
                   {Object.entries(plant).map(([fieldName, fieldValue]) => {
                     if (fieldName === "id") return;
                     if (fieldName === "Image" && fieldValue) {
@@ -410,11 +415,11 @@ const savePlant = async (plant: any) => {
   tx.objectStore(STORE_NAME).add(plant);
 };
 
-const deletePlantById = async (id: number) => {
-  const db = await openDB();
-  const tx = db.transaction(STORE_NAME, "readwrite");
-  tx.objectStore(STORE_NAME).delete(id);
-};
+// const deletePlantById = async (id: number) => {
+//   const db = await openDB();
+//   const tx = db.transaction(STORE_NAME, "readwrite");
+//   tx.objectStore(STORE_NAME).delete(id);
+// };
 
 export const editPlantById = async (id: number, updatedPlant: Plant) => {
   const db = await openDB();
